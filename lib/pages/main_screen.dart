@@ -18,25 +18,27 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
-  // Pages
-  static const List<Widget> _pageList = <Widget>[
-    TasksPage(),
-    CalendarPage(),
-    StarredPage(),
-    SettingsPage(),
-    AddTask()
-  ];
+  // Return selected page
+  Widget? _getPage() {
+    switch (_selectedIndex) {
+      case 0:
+        return TasksPage();
+      case 1:
+        return CalendarPage();
+      case 2:
+        return StarredPage();
+      case 3:
+        return SettingsPage();
+      case 4:
+        return AddTask(switchPage: switchPage);
+    }
+    return null;
+  }
 
   // Switch page when bottom navbar item is tapped
   void switchPage(int index) {
     setState(() {
       _selectedIndex = index;
-    });
-  }
-
-  void showAddTask() {
-    setState(() {
-      _selectedIndex = 4;
     });
   }
 
@@ -73,12 +75,12 @@ class _MainScreenState extends State<MainScreen> {
         actions: [IconButton(onPressed: () {}, icon: Icon(Icons.more_vert))],
       ),
 
-      body: _pageList[_selectedIndex],
+      body: _getPage(),
 
       // Floating action
       floatingActionButton: _selectedIndex == 0
           ? FloatingActionButton(
-              onPressed: showAddTask,
+              onPressed: () => switchPage(4),
               backgroundColor: Colors.blueAccent[400],
               foregroundColor: Colors.white,
               child: Icon(Icons.add),
