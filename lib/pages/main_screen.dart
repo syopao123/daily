@@ -1,12 +1,13 @@
-import 'dart:ffi';
-
 import 'package:daily/components/add_task.dart';
+import 'package:daily/models/task.dart';
 import 'package:daily/pages/calendar_page.dart';
 import 'package:daily/pages/settings_page.dart';
 import 'package:daily/pages/starred_page.dart';
 import 'package:daily/pages/tasks_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
+import 'package:daily/models/mock_tasks.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -16,13 +17,14 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  final List<Task> _mockTasks = List.from(mockTasks);
   int _selectedIndex = 0;
 
   // Return selected page
   Widget? _getPage() {
     switch (_selectedIndex) {
       case 0:
-        return TasksPage();
+        return TasksPage(completeTask: completeTask, deleteTask: deleteTask, mockTasks: _mockTasks,);
       case 1:
         return CalendarPage();
       case 2:
@@ -30,7 +32,7 @@ class _MainScreenState extends State<MainScreen> {
       case 3:
         return SettingsPage();
       case 4:
-        return AddTask(switchPage: switchPage);
+        return AddTask(switchPage: switchPage, onAddTask: addTask);
     }
     return null;
   }
@@ -39,6 +41,28 @@ class _MainScreenState extends State<MainScreen> {
   void switchPage(int index) {
     setState(() {
       _selectedIndex = index;
+    });
+  }
+
+  // Add new task
+  void addTask(Task task) {
+    setState(() {
+      _mockTasks.add(task);
+      _selectedIndex = 0;
+    });
+  }
+
+  // Delete task
+  void deleteTask(Task task) {
+    setState(() {
+      _mockTasks.remove(task);
+    });
+  }
+
+  // Mark task as complete
+  void completeTask(Task task) {
+    setState(() {
+      task.isDone = !task.isDone;
     });
   }
 

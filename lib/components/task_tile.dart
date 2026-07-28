@@ -36,10 +36,12 @@ class TaskTile extends StatelessWidget {
           extentRatio: 0.2,
           motion: const ScrollMotion(),
           children: [
-            // Delete task
+
+            // Delete task button
             SlidableAction(
               onPressed: (context) => deleteTask(task),
-              backgroundColor: Colors.red,
+              backgroundColor: Colors.red.shade500,
+              foregroundColor: Colors.white,
               icon: Icons.delete,
               borderRadius: BorderRadius.only(
                 topRight: Radius.circular(8),
@@ -56,7 +58,7 @@ class TaskTile extends StatelessWidget {
             border: Border(
               left: BorderSide(color: getTaskPriority(), width: 5),
             ),
-            borderRadius: BorderRadius.circular(5),
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(5), bottomLeft: Radius.circular(5)),
             boxShadow: [BoxShadow(
               color: const Color.fromARGB(255, 235, 235, 235),
               spreadRadius: 1,
