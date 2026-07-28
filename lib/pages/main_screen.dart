@@ -1,3 +1,6 @@
+import 'dart:ffi';
+
+import 'package:daily/components/add_task.dart';
 import 'package:daily/pages/calendar_page.dart';
 import 'package:daily/pages/settings_page.dart';
 import 'package:daily/pages/starred_page.dart';
@@ -21,6 +24,7 @@ class _MainScreenState extends State<MainScreen> {
     CalendarPage(),
     StarredPage(),
     SettingsPage(),
+    AddTask()
   ];
 
   // Switch page when bottom navbar item is tapped
@@ -30,13 +34,21 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
+  void showAddTask() {
+    setState(() {
+      _selectedIndex = 4;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
+      // App bar
       appBar: AppBar(
         leading: Container(
           padding: EdgeInsets.only(bottom: 15),
-          child: Icon(Icons.calendar_month, size: 28, color: Colors.deepPurple),
+          child: Icon(Icons.calendar_month, size: 32, color: Colors.blue[600]),
         ),
         title: Container(
           padding: EdgeInsets.only(bottom: 15),
@@ -47,7 +59,7 @@ class _MainScreenState extends State<MainScreen> {
                 'Daily',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: Colors.deepPurpleAccent,
+                  color: Colors.blue[600],
                 ),
               ),
               Text(
@@ -63,20 +75,24 @@ class _MainScreenState extends State<MainScreen> {
 
       body: _pageList[_selectedIndex],
 
+      // Floating action
       floatingActionButton: _selectedIndex == 0
           ? FloatingActionButton(
-              onPressed: () {},
-              backgroundColor: Colors.deepPurple,
+              onPressed: showAddTask,
+              backgroundColor: Colors.blueAccent[400],
               foregroundColor: Colors.white,
-              shape: CircleBorder(),
               child: Icon(Icons.add),
             )
           : null,
-
+      
+      // Bottom navbar
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
+        currentIndex: _selectedIndex < 4 ? _selectedIndex : 0,
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.deepPurple,
+        selectedItemColor: Colors.blue[700],
+        iconSize: 26,
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
         onTap: switchPage,
         items: [
           BottomNavigationBarItem(
