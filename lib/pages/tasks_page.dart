@@ -4,13 +4,16 @@ import 'package:flutter/material.dart';
 
 class TasksPage extends StatefulWidget {
   final List<Task> mockTasks;
-  final void Function(Task) completeTask;
+  final void Function(Task) toggleTask;
   final void Function(Task) deleteTask;
+  final void Function(Task) editTask;
+
   const TasksPage({
     super.key,
     required this.mockTasks,
-    required this.completeTask,
+    required this.toggleTask,
     required this.deleteTask,
+    required this.editTask
   });
 
   @override
@@ -93,11 +96,12 @@ class _TasksPageState extends State<TasksPage> {
               children: [
                 for (final task in _getFilteredTasks())
                   TaskTile(
-                    key: ObjectKey(task),
-                    task: task,
-                    completeTask: widget.completeTask,
-                    deleteTask: widget.deleteTask,
-                  ),
+                      key: ObjectKey(task),
+                      task: task,
+                      toggleTask: widget.toggleTask,
+                      deleteTask: widget.deleteTask,
+                      editTask: widget.editTask
+                    ),
               ],
             ),
           ),

@@ -1,4 +1,4 @@
-import 'package:daily/components/add_task.dart';
+import 'package:daily/pages/edit_task_page.dart';
 import 'package:daily/models/task.dart';
 import 'package:daily/pages/calendar_page.dart';
 import 'package:daily/pages/settings_page.dart';
@@ -20,11 +20,19 @@ class _MainScreenState extends State<MainScreen> {
   final List<Task> _mockTasks = List.from(mockTasks);
   int _selectedIndex = 0;
 
+  // Task to be edited
+  Task? selectedTask;
+
   // Return selected page
   Widget? _getPage() {
     switch (_selectedIndex) {
       case 0:
-        return TasksPage(completeTask: completeTask, deleteTask: deleteTask, mockTasks: _mockTasks,);
+        return TasksPage(
+          toggleTask: toggleTask,
+          deleteTask: deleteTask,
+          mockTasks: _mockTasks,
+          editTask: editTask
+        );
       case 1:
         return CalendarPage();
       case 2:
@@ -32,13 +40,25 @@ class _MainScreenState extends State<MainScreen> {
       case 3:
         return SettingsPage();
       case 4:
-        return AddTask(switchPage: switchPage, onAddTask: addTask);
+        return EditTaskPage(
+          switchPage: switchPage,
+          onAddTask: addTask,
+          onEditTask: updateTask,
+          selectedTask: selectedTask,
+        );
     }
     return null;
   }
 
+  // Show edit task page
+  void editTask(Task task) {
+    selectedTask = task;
+    switchPage(4);
+  }
+
   // Switch page when bottom navbar item is tapped
   void switchPage(int index) {
+    if (index != 4) selectedTask = null;
     setState(() {
       _selectedIndex = index;
     });
@@ -52,6 +72,16 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
+  // Update task
+  void updateTask(Task updatedTask) {
+    setState(() {
+      final index = _mockTasks.indexWhere((task) => task.id == updatedTask.id);
+      if (index != 1) {
+        _mockTasks[index] = updatedTask;
+      }
+    });
+  }
+
   // Delete task
   void deleteTask(Task task) {
     setState(() {
@@ -59,8 +89,8 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  // Mark task as complete
-  void completeTask(Task task) {
+  // Toggle task
+  void toggleTask(Task task) {
     setState(() {
       task.isDone = !task.isDone;
     });

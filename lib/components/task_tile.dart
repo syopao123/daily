@@ -5,14 +5,16 @@ import 'package:intl/intl.dart';
 
 class TaskTile extends StatelessWidget {
   final Task task;
-  final void Function(Task) completeTask;
+  final void Function(Task) toggleTask;
   final void Function(Task) deleteTask;
+  final void Function(Task) editTask;
 
   const TaskTile({
     super.key,
     required this.task,
-    required this.completeTask,
+    required this.toggleTask,
     required this.deleteTask,
+    required this.editTask
   });
 
   Color getTaskPriority() {
@@ -48,6 +50,7 @@ class TaskTile extends StatelessWidget {
                 bottomRight: Radius.circular(8),
               ),
             ),
+
           ],
         ),
 
@@ -66,30 +69,53 @@ class TaskTile extends StatelessWidget {
             )]
           ),
           child: ListTile(
-            onTap: () => completeTask(task),
-            leading: task.isDone ? Icon(Icons.check_circle) : Icon(Icons.circle_outlined),
+            // Open edit task page
+            onTap: () => editTask(task),
+
+            // Toggle task
+            leading: task.isDone
+                ? GestureDetector(
+                    onTap: () => toggleTask(task),
+                    child: Icon(Icons.check_circle, size: 28),
+                  )
+                : GestureDetector(
+                    onTap: () => toggleTask(task),
+                    child: Icon(Icons.circle_outlined, size: 28),
+                  ),
             title: Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+
+                  // Task name
                   Text(
                     task.title,
                     style: task.isDone ? TextStyle(decoration: TextDecoration.lineThrough) : null,
                   ),
+
+                  // Task due date
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       if (task.dueDate != null)
                         Text(
                           DateFormat('h:mm a').format(task.dueDate!),
-                          style: task.isDone ? TextStyle(decoration: TextDecoration.lineThrough) : null,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            decoration: task.isDone ? TextDecoration.lineThrough : null
+                          )
                         ),
                       
                       if (task.dueDate != null)
                         Text(
                           DateFormat('MMM dd').format(task.dueDate!),
-                          style: task.isDone ? TextStyle(decoration: TextDecoration.lineThrough) : null,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            decoration: task.isDone ? TextDecoration.lineThrough : null
+                          )
                         ),
                     ],
                   ),
