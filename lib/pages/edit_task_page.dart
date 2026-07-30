@@ -21,6 +21,9 @@ class EditTaskPage extends StatefulWidget {
 }
 
 class _EditTaskPageState extends State<EditTaskPage> {
+
+  late bool isEditingTask;
+
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _titleController;
   late TextEditingController _notesController;
@@ -29,11 +32,15 @@ class _EditTaskPageState extends State<EditTaskPage> {
 
   final List<bool> _priorityButtonsSelection = [false, false, false];
 
-  // Initialize fields if editing a task
   @override
   void initState() {
     super.initState();
-    if (widget.selectedTask != null) {
+
+    isEditingTask = widget.selectedTask != null ? true : false;
+
+    // Initialize fields if editing a task
+    if (isEditingTask) {
+
       _titleController = TextEditingController(text: widget.selectedTask!.title);
       _notesController = TextEditingController(text: widget.selectedTask!.notes,);
       _dueDate = widget.selectedTask!.dueDate;
@@ -49,12 +56,14 @@ class _EditTaskPageState extends State<EditTaskPage> {
       }
 
     } else {
+
       _titleController = TextEditingController();
       _notesController = TextEditingController();
       _dueDate = null;
       _taskPriority = Priority.low;
+
     }
-  }  
+  }
 
   // Attempt to add task
   void _submit() {
@@ -160,9 +169,7 @@ class _EditTaskPageState extends State<EditTaskPage> {
                           icon: Icon(Icons.arrow_back),
                         ),
                         Text(
-                          widget.selectedTask != null
-                              ? "Edit Task"
-                              : "Add Task",
+                          isEditingTask ? "Edit Task" : "Add Task",
                           style: TextStyle(fontSize: 20),
                         ),
                       ],
@@ -347,7 +354,7 @@ class _EditTaskPageState extends State<EditTaskPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     TextButton(
-                      onPressed: widget.selectedTask == null ? _submit : () => widget.onEditTask ,
+                      onPressed: isEditingTask ? () => widget.onEditTask : _submit,
                       style: ButtonStyle(
                         foregroundColor: WidgetStateProperty.all<Color>(
                           Colors.white,

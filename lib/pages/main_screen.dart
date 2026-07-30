@@ -2,7 +2,6 @@ import 'package:daily/pages/edit_task_page.dart';
 import 'package:daily/models/task.dart';
 import 'package:daily/pages/calendar_page.dart';
 import 'package:daily/pages/settings_page.dart';
-import 'package:daily/pages/starred_page.dart';
 import 'package:daily/pages/tasks_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -34,12 +33,14 @@ class _MainScreenState extends State<MainScreen> {
           editTask: editTask
         );
       case 1:
-        return CalendarPage();
+        return CalendarPage(
+          toggleTask: toggleTask,
+          deleteTask: deleteTask,
+          editTask: editTask,
+        );
       case 2:
-        return StarredPage();
-      case 3:
         return SettingsPage();
-      case 4:
+      case 3:
         return EditTaskPage(
           switchPage: switchPage,
           onAddTask: addTask,
@@ -53,12 +54,12 @@ class _MainScreenState extends State<MainScreen> {
   // Show edit task page
   void editTask(Task task) {
     selectedTask = task;
-    switchPage(4);
+    switchPage(3);
   }
 
   // Switch page when bottom navbar item is tapped
   void switchPage(int index) {
-    if (index != 4) selectedTask = null;
+    if (index != 3) selectedTask = null;
     setState(() {
       _selectedIndex = index;
     });
@@ -134,7 +135,7 @@ class _MainScreenState extends State<MainScreen> {
       // Floating action
       floatingActionButton: _selectedIndex == 0
           ? FloatingActionButton(
-              onPressed: () => switchPage(4),
+              onPressed: () => switchPage(3),
               backgroundColor: Colors.blueAccent[400],
               foregroundColor: Colors.white,
               child: Icon(Icons.add),
@@ -143,7 +144,7 @@ class _MainScreenState extends State<MainScreen> {
       
       // Bottom navbar
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex < 4 ? _selectedIndex : 0,
+        currentIndex: _selectedIndex < 3 ? _selectedIndex : 0,
         type: BottomNavigationBarType.fixed,
         selectedItemColor: Colors.blue[700],
         iconSize: 26,
@@ -160,11 +161,6 @@ class _MainScreenState extends State<MainScreen> {
             icon: Icon(Icons.calendar_month_outlined),
             label: 'Calendar',
             activeIcon: Icon(Icons.calendar_month),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.star_border_outlined),
-            label: 'Starred',
-            activeIcon: Icon(Icons.star),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings_outlined),
