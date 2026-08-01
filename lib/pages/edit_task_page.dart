@@ -79,6 +79,24 @@ class _EditTaskPageState extends State<EditTaskPage> {
       );
     }
   }
+  
+  // Update selected task
+  void _submitEdit() {
+    if (_formKey.currentState!.validate()) {
+      widget.onEditTask(
+        Task(
+          id: widget.selectedTask!.id,
+          title: _titleController.text,
+          notes: _notesController.text,
+          dueDate: _dueDate,
+          priority: _taskPriority,
+          isDone: widget
+              .selectedTask!
+              .isDone,
+        ),
+      );
+    }
+  }
 
   // Show date & time picker when button is clicked
   void _showDatePicker() async {
@@ -354,7 +372,7 @@ class _EditTaskPageState extends State<EditTaskPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     TextButton(
-                      onPressed: isEditingTask ? () => widget.onEditTask : _submit,
+                      onPressed: isEditingTask ? _submitEdit : _submit,
                       style: ButtonStyle(
                         foregroundColor: WidgetStateProperty.all<Color>(
                           Colors.white,

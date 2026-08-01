@@ -1,3 +1,4 @@
+import 'package:daily/db/database_helper.dart';
 import 'package:daily/pages/edit_task_page.dart';
 import 'package:daily/models/task.dart';
 import 'package:daily/pages/calendar_page.dart';
@@ -5,8 +6,6 @@ import 'package:daily/pages/settings_page.dart';
 import 'package:daily/pages/tasks_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
-import 'package:daily/models/mock_tasks.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -16,11 +15,24 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  final List<Task> _mockTasks = List.from(mockTasks);
+  List<Task> _tasks = [];
   int _selectedIndex = 0;
-
   // Task to be edited
   Task? selectedTask;
+
+  @override
+  void initState() {
+    super.initState();
+    // Load tasks
+    _loadTasks();
+  }
+
+  Future<void> _loadTasks() async {
+    final tasks = await DatabaseHelper.instance.getAllTasks();
+    setState(() {
+      _tasks = tasks;
+    });
+  }
 
   // Return selected page
   Widget? _getPage() {
@@ -29,7 +41,7 @@ class _MainScreenState extends State<MainScreen> {
         return TasksPage(
           toggleTask: toggleTask,
           deleteTask: deleteTask,
-          mockTasks: _mockTasks,
+          tasks: _tasks,
           editTask: editTask
         );
       case 1:
@@ -65,36 +77,42 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  // Add new task
-  void addTask(Task task) {
+  // Add task
+  Future<void> addTask(Task task) async {
+    await DatabaseHelper.instance.insertTask(task);
     setState(() {
-      _mockTasks.add(task);
+      _tasks.add(task);
       _selectedIndex = 0;
     });
   }
 
   // Update task
-  void updateTask(Task updatedTask) {
+  Future<void> updateTask(Task task) async {
+    await DatabaseHelper.instance.updateTask(task);
     setState(() {
-      final index = _mockTasks.indexWhere((task) => task.id == updatedTask.id);
-      if (index != 1) {
-        _mockTasks[index] = updatedTask;
+      final index = _tasks.indexWhere((t) => t.id == task.id);
+      if (index != -1) {
+        _tasks[index] = task;
       }
+      selectedTask = null;
+      _selectedIndex = 0;
     });
   }
 
   // Delete task
-  void deleteTask(Task task) {
+  Future<void> deleteTask(Task task) async {
+    await DatabaseHelper.instance.deleteTask(task.id);
     setState(() {
-      _mockTasks.remove(task);
+      _tasks.removeWhere((t) => t.id == task.id);
     });
   }
 
   // Toggle task
-  void toggleTask(Task task) {
+  Future<void> toggleTask(Task task) async {
     setState(() {
       task.isDone = !task.isDone;
     });
+    await DatabaseHelper.instance.updateTask(task);
   }
 
   @override

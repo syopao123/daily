@@ -3,14 +3,14 @@ import 'package:daily/models/task.dart';
 import 'package:flutter/material.dart';
 
 class TasksPage extends StatefulWidget {
-  final List<Task> mockTasks;
+  final List<Task> _tasks;
   final void Function(Task) toggleTask;
   final void Function(Task) deleteTask;
   final void Function(Task) editTask;
 
   const TasksPage({
     super.key,
-    required this.mockTasks,
+    required this._tasks,
     required this.toggleTask,
     required this.deleteTask,
     required this.editTask
@@ -25,11 +25,12 @@ class _TasksPageState extends State<TasksPage> {
 
   // Filter tasks helper
   List<Task> _getFilteredTasks() {
+    if (widget._tasks.isEmpty) return [];
     final now = DateTime.now();
     final todayMidnight = DateTime.utc(now.year, now.month, now.day);
     switch (_currentFilter) {
       case 1:
-        return widget.mockTasks
+        return widget._tasks
             .where(
               (task) =>
                   (task.dueDate != null && !task.isDone &&
@@ -41,7 +42,7 @@ class _TasksPageState extends State<TasksPage> {
             )
             .toList();
       case 2:
-        return widget.mockTasks
+        return widget._tasks
             .where(
               (task) =>
                   (task.dueDate != null && !task.isDone &&
@@ -49,9 +50,9 @@ class _TasksPageState extends State<TasksPage> {
             )
             .toList();
       case 3:
-        return widget.mockTasks.where((task) => (task.isDone)).toList();
+        return widget._tasks.where((task) => (task.isDone)).toList();
       default:
-        return widget.mockTasks;
+        return widget._tasks;
     }
   }
 
