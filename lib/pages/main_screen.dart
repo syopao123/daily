@@ -46,6 +46,7 @@ class _MainScreenState extends State<MainScreen> {
         );
       case 1:
         return CalendarPage(
+          tasks: _tasks,
           toggleTask: toggleTask,
           deleteTask: deleteTask,
           editTask: editTask,

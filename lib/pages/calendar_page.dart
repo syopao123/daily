@@ -1,15 +1,16 @@
 import 'package:daily/components/task_tile.dart';
-import 'package:daily/models/mock_tasks.dart';
 import 'package:daily/models/task.dart';
 import 'package:flutter/material.dart';
 
 class CalendarPage extends StatefulWidget {
+  final List<Task> _tasks;
   final void Function(Task) toggleTask;
   final void Function(Task) editTask;
   final void Function(Task) deleteTask;
 
   const CalendarPage({
     super.key,
+    required this._tasks,
     required this.toggleTask,
     required this.editTask,
     required this.deleteTask,
@@ -21,15 +22,19 @@ class CalendarPage extends StatefulWidget {
 
 class _CalendarPageState extends State<CalendarPage> {
   DateTime _selectedDate = DateTime.now();
-  List<Task>? _tasks;
+  late List<Task> _filteredTasks;
 
-  final today = DateTime.now();
+  @override
+  void initState() {
+    onDateChanged(_selectedDate);
+    super.initState();
+  }
 
   void onDateChanged(DateTime date) {
     setState(() {
       _selectedDate = date;
-      _tasks = mockTasks.where((task) {
-        //if (task.dueDate == null) return false;
+      _filteredTasks = widget._tasks.where((task) {
+        if (task.dueDate == null) return false;
         return task.dueDate!.year == _selectedDate.year &&
             task.dueDate!.month == _selectedDate.month &&
             task.dueDate!.day == _selectedDate.day;
@@ -68,8 +73,8 @@ class _CalendarPageState extends State<CalendarPage> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
             ),
             const SizedBox(height: 12.0),
-            if (_tasks != null)
-              for (final task in _tasks!)
+            if (_filteredTasks.isNotEmpty)
+              for (final task in _filteredTasks)
                 TaskTile(
                   key: ObjectKey(task),
                   task: task,
